@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./resume.jpeg" align="center" width="400px"/>
+
 # Resume Starter
 
 A starting point to Kubernetes
@@ -15,7 +17,7 @@ Kubernetes is trusted by enterprises across the world to host thousands of missi
 - View our finished product in the browser exposed by a `Service` and `Ingress` (powered by [Nginx](https://github.com/kubernetes/ingress-nginx))
 - Generate web traffic and auto-scale the web app to multiple instances using a `HorizontalPodAutoscaler` (powered by [metrics-server](https://github.com/kubernetes-sigs/metrics-server))
 
-## Getting Started
+## 🏁 Getting Started
 
 Deploying Kubernetes is the hardest part. In my local environment, I settled with Docker Desktop's built-in Kubernetes cluster.
 

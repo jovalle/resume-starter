@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume-starter
+  labels:
+    app: resume-starter
+  annotations:
+    configmap.reloader.stakater.com/reload: "resume-starter-data"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: resume-starter
+  template:
+    metadata:
+      labels:
+        app: resume-starter
+    spec:
+      containers:
+        - name: resume-starter
+          image: jovalle/resume-starter:0.0.1
+          command: ["/bin/sh", "-c"]
+          args: ["cp /tmp/data/hugo.yml /hugo/hugo.yml && cp /tmp/data/data.yml /hugo/data/data.yml && /usr/local/bin/hugo -s /hugo server -D --bind 0.0.0.0 --port 30000"]
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "25Mi"
+            limits:
+              cpu: "10m"
+              memory: "50Mi"
+          volumeMounts:
+            - name: data
+              mountPath: /tmp/data
+      volumes:
+        - name: data
+          configMap:
+            name: resume-starter-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: resume-starter
+  name: resume-starter
+spec:
+  ports:
+  - port: 30000
+    protocol: TCP
+    targetPort: 30000
+  selector:
+    app: resume-starter
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: resume.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                 name: resume-starter
+                 port:
+                   number: 30000
